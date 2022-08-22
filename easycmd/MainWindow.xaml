@@ -1,0 +1,40 @@
+﻿<Window x:Class="easycmd.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:easycmd"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="1.5*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="0.75*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="0.75*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.ColumnSpan="3" Text="文件列表" TextAlignment="Center" FontSize="15"/>
+        <TextBlock Grid.Column="4" Grid.ColumnSpan="3" Text="命令" TextAlignment="Center" FontSize="15"/>
+        <ListBox x:Name="FileListBox" Grid.Row="1" Grid.ColumnSpan="3" AllowDrop="True" Drop="FileListBox_Drop"/>
+        <ListBox x:Name="CmdListBox" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3"/>
+        <Button x:Name="RemoveFileButton" Grid.Row="3" Content="删除" FontSize="15" Click="RemoveFileButton_Click"/>
+        <Button x:Name="RemoveAllFileButton" Grid.Row="3" Grid.Column="2" Content="清空" FontSize="15" Click="RemoveAllFileButton_Click"/>
+        <Button x:Name="NewCmdButton" Grid.Row="3" Grid.Column="4" Content="新建" FontSize="15"/>
+        <Button x:Name="EditCmdButton" Grid.Row="3" Grid.Column="6" Content="编辑" FontSize="15"/>
+        <TextBox x:Name="CmdTextBox" Grid.Row="5" Grid.ColumnSpan="5" Text="cmd" IsReadOnly="True" TextWrapping="Wrap" FontSize="15"/>
+        <Button x:Name="StartButton" Grid.Row="7" Grid.Column="6" Content="开始" FontSize="15"/>
+    </Grid>
+</Window>
