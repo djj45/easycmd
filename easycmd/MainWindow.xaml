@@ -21,20 +21,23 @@
             <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="1.5*"/>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="0.75*"/>
+            <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="0.75*"/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.ColumnSpan="3" Text="文件列表" TextAlignment="Center" FontSize="15"/>
-        <TextBlock Grid.Column="4" Grid.ColumnSpan="3" Text="命令" TextAlignment="Center" FontSize="15"/>
+        <TextBlock Grid.Column="4" Grid.ColumnSpan="5" Text="命令" TextAlignment="Center" FontSize="15"/>
         <ListBox x:Name="FileListBox" Grid.Row="1" Grid.ColumnSpan="3" AllowDrop="True" Drop="FileListBox_Drop"/>
-        <ListBox x:Name="CmdListBox" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3"/>
+        <ListBox x:Name="CmdListBox" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="5"/>
         <Button x:Name="RemoveFileButton" Grid.Row="3" Content="删除" FontSize="15" Click="RemoveFileButton_Click"/>
         <Button x:Name="RemoveAllFileButton" Grid.Row="3" Grid.Column="2" Content="清空" FontSize="15" Click="RemoveAllFileButton_Click"/>
-        <Button x:Name="NewCmdButton" Grid.Row="3" Grid.Column="4" Content="新建" FontSize="15"/>
+        <Button x:Name="RemoveCmdButton" Grid.Row="3" Grid.Column="4" Content="删除" FontSize="15"/>
         <Button x:Name="EditCmdButton" Grid.Row="3" Grid.Column="6" Content="编辑" FontSize="15"/>
-        <TextBox x:Name="CmdTextBox" Grid.Row="5" Grid.ColumnSpan="5" Text="cmd" IsReadOnly="True" TextWrapping="Wrap" FontSize="15"/>
-        <Button x:Name="StartButton" Grid.Row="7" Grid.Column="6" Content="开始" FontSize="15"/>
+        <Button x:Name="NewCmdButton" Grid.Row="3" Grid.Column="8" Content="新建" FontSize="15" Click="NewCmdButton_Click"/>
+        <TextBox x:Name="CmdTextBox" Grid.Row="5" Grid.ColumnSpan="7" Text="cmd" IsReadOnly="True" TextWrapping="Wrap" FontSize="15"/>
+        <Button x:Name="StartButton" Grid.Row="7" Grid.Column="8" Content="开始" FontSize="15"/>
     </Grid>
 </Window>

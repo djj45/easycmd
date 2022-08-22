@@ -48,5 +48,10 @@ namespace easycmd
             FileListBox.Items.Clear();
         }
 
+        private void NewCmdButton_Click(object sender, RoutedEventArgs e)
+        {
+            CmdWindow cmdWindow = new CmdWindow();
+            cmdWindow.ShowDialog();
+        }
     }
 }
