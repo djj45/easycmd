@@ -28,6 +28,10 @@
         <TextBox x:Name="CmdTextBox" Grid.Row="2" Grid.ColumnSpan="2" TextWrapping="Wrap" FontSize="15"/>
         <TextBlock Text="名称" FontSize="15" Grid.Row="4"/>
         <TextBox x:Name="NameTextBox" Grid.Row="6" Grid.ColumnSpan="2" FontSize="15"/>
-        <Button Grid.Row="8" Grid.Column="2" Content="保存" FontSize="15"/>
+        <Button Grid.Row="8" Grid.Column="2" Content="保存" FontSize="15" Command="Save">
+            <Button.CommandBindings>
+                <CommandBinding Command="Save" CanExecute="Save_CanExecute"/>
+            </Button.CommandBindings>
+        </Button>
     </Grid>
 </Window>

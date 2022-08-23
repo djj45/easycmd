@@ -23,5 +23,17 @@ namespace easycmd
         {
             InitializeComponent();
         }
+
+        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(CmdTextBox.Text) && !string.IsNullOrEmpty(NameTextBox.Text))
+            {
+                e.CanExecute = true;
+            }
+            else
+            {
+                e.CanExecute = false;
+            }
+        }
     }
 }
