@@ -11,10 +11,11 @@ namespace easycmd
         public string Command { get; set; }
         public string Name { get; set; }
 
-        public Cmd(string command, string name)
+        public Cmd(string name, string command)
         {
-            Command = command;
             Name = name;
+            Command = command;
+           
         }
     }
 }

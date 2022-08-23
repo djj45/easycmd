@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,13 +23,19 @@ namespace easycmd
     public partial class MainWindow : Window
     {
         ObservableCollection<FileName> files = new ObservableCollection<FileName>();
-        
+        List<string> cmdNames = new List<string>();
+
         public MainWindow()
         {
             InitializeComponent();
-            
+            LoadCmd();
+
+
             FileListBox.ItemsSource = files;
             FileListBox.DisplayMemberPath = "Name";
+
+            CmdListBox.ItemsSource = cmdNames;
+            
         }
 
         private void FileListBox_Drop(object sender, DragEventArgs e)
@@ -60,6 +67,7 @@ namespace easycmd
             CmdWindow cmdWindow = new CmdWindow();
             cmdWindow.Top = Top + 20;
             cmdWindow.Left = Left + 20;
+            cmdWindow.sendMessage = Recevie;
             cmdWindow.ShowDialog();
         }
 
@@ -104,5 +112,24 @@ namespace easycmd
                 e.CanExecute = true;
             }
         }
+
+        private void LoadCmd()
+        {
+            using (StreamReader sr = new StreamReader("1.txt"))
+            {
+                string cmdLine;
+                while ((cmdLine = sr.ReadLine()) != null)
+                {
+                    Cmd cmd = new Cmd(cmdLine.Split('@')[0], cmdLine.Split('@')[1]);
+                    cmdNames.Add(cmd.Name);
+                }
+            }
+        }
+
+        public void Recevie(string value)
+        {
+            MessageBox.Show(value);
+        }
+
     }
 }
