@@ -22,13 +22,12 @@ namespace easycmd
     {
         List<string> cmdNames = new List<string>();
         List<string> cmdCommands = new List<string>();
-        public delegate void SendMessage(string value);
-        public SendMessage sendMessage;
+        public delegate void IsSaveCmd();
+        public IsSaveCmd isSaveCmd;
 
         public CmdWindow()
         {
             InitializeComponent();
-            LoadCmd();
         }
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -45,6 +44,7 @@ namespace easycmd
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            LoadCmd();
             string command = CmdTextBox.Text;
             string name = NameTextBox.Text;
             bool canSave = true;
@@ -70,11 +70,10 @@ namespace easycmd
             {
                 using (StreamWriter sw = new StreamWriter("1.txt", true))
                 {
-                    sw.WriteLine(name + '@' + command);
+                    sw.WriteLine(name + '<' + command);
                     MessageBox.Show("保存成功");
-                    sendMessage(name);
-                    Close();
                 }
+                isSaveCmd();
             }
         }
 
@@ -85,7 +84,7 @@ namespace easycmd
                 string cmdLine;
                 while ((cmdLine = sr.ReadLine()) != null)
                 {
-                    Cmd cmd = new Cmd(cmdLine.Split('@')[0], cmdLine.Split('@')[1]);
+                    Cmd cmd = new Cmd(cmdLine.Split('<')[0], cmdLine.Split('<')[1]);
                     cmdNames.Add(cmd.Name);
                     cmdCommands.Add(cmd.Command);
                 }

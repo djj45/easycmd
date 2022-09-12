@@ -15,7 +15,6 @@ namespace easycmd
         {
             Name = name;
             Command = command;
-           
         }
     }
 }

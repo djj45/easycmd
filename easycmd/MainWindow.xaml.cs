@@ -22,8 +22,9 @@ namespace easycmd
     /// </summary>
     public partial class MainWindow : Window
     {
-        ObservableCollection<FileName> files = new ObservableCollection<FileName>();
-        List<string> cmdNames = new List<string>();
+        ObservableCollection<string> files = new ObservableCollection<string>();
+        ObservableCollection<string> cmdNames = new ObservableCollection<string>();
+        ObservableCollection<string> cmdCmds = new ObservableCollection<string>();
 
         public MainWindow()
         {
@@ -32,10 +33,9 @@ namespace easycmd
 
 
             FileListBox.ItemsSource = files;
-            FileListBox.DisplayMemberPath = "Name";
 
             CmdListBox.ItemsSource = cmdNames;
-            
+
         }
 
         private void FileListBox_Drop(object sender, DragEventArgs e)
@@ -46,9 +46,9 @@ namespace easycmd
 
                 foreach (string path in filePath)
                 {
-                    FileName file = new FileName(path);
-                    files.Add(file);
+                    files.Add(path);
                 }
+                CmdListBox.Focus();
             }
         }
 
@@ -67,7 +67,7 @@ namespace easycmd
             CmdWindow cmdWindow = new CmdWindow();
             cmdWindow.Top = Top + 20;
             cmdWindow.Left = Left + 20;
-            cmdWindow.sendMessage = Recevie;
+            cmdWindow.isSaveCmd += LoadCmd;
             cmdWindow.ShowDialog();
         }
 
@@ -85,7 +85,15 @@ namespace easycmd
 
         private void DeleteCmdButton_Click(object sender, RoutedEventArgs e)
         {
-            CmdListBox.Items.Remove(CmdListBox.SelectedItem);
+            cmdNames.RemoveAt(CmdListBox.SelectedIndex);
+
+            using (StreamWriter sw = new StreamWriter("1.txt"))
+            {
+                for (int i = 0; i < cmdNames.Count; i++)
+                {
+                    sw.WriteLine(cmdNames[i] + "<" + cmdCmds[i]);
+                }
+            }
         }
 
         private void DeleteCmd_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -102,7 +110,6 @@ namespace easycmd
 
         private void ClearFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            //bug:当文件列表只有一个文件时，清空按钮不可用
             if (files.Count == 0)
             {
                 e.CanExecute = false;
@@ -113,22 +120,20 @@ namespace easycmd
             }
         }
 
-        private void LoadCmd()
+        public void LoadCmd()
         {
+            cmdNames.Clear();
+            cmdCmds.Clear();
             using (StreamReader sr = new StreamReader("1.txt"))
             {
                 string cmdLine;
                 while ((cmdLine = sr.ReadLine()) != null)
                 {
-                    Cmd cmd = new Cmd(cmdLine.Split('@')[0], cmdLine.Split('@')[1]);
+                    Cmd cmd = new Cmd(cmdLine.Split('<')[0], cmdLine.Split('<')[1]);
                     cmdNames.Add(cmd.Name);
+                    cmdCmds.Add(cmd.Command);
                 }
             }
-        }
-
-        public void Recevie(string value)
-        {
-            MessageBox.Show(value);
         }
 
     }
