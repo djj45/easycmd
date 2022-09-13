@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -31,11 +32,8 @@ namespace easycmd
             InitializeComponent();
             LoadCmd();
 
-
             FileListBox.ItemsSource = files;
-
             CmdListBox.ItemsSource = cmdNames;
-
         }
 
         private void FileListBox_Drop(object sender, DragEventArgs e)
@@ -64,11 +62,7 @@ namespace easycmd
 
         private void NewCmdButton_Click(object sender, RoutedEventArgs e)
         {
-            CmdWindow cmdWindow = new CmdWindow();
-            cmdWindow.Top = Top + 20;
-            cmdWindow.Left = Left + 20;
-            cmdWindow.isSaveCmd += LoadCmd;
-            cmdWindow.ShowDialog();
+            OpenNewWindow();
         }
 
         private void DeleteFile_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -124,6 +118,7 @@ namespace easycmd
         {
             cmdNames.Clear();
             cmdCmds.Clear();
+
             using (StreamReader sr = new StreamReader("1.txt"))
             {
                 string cmdLine;
@@ -136,5 +131,27 @@ namespace easycmd
             }
         }
 
+        private void EditCmdButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenNewWindow(cmdCmds, cmdNames, CmdListBox.SelectedIndex);
+        }
+
+        private void OpenNewWindow()
+        {
+            CmdWindow cmdWindow = new CmdWindow();
+            cmdWindow.Top = Top + 20;
+            cmdWindow.Left = Left + 20;
+            cmdWindow.isSaveCmd += LoadCmd;
+            cmdWindow.ShowDialog();
+        }
+
+        private void OpenNewWindow(ObservableCollection<string> cmdCmds, ObservableCollection<string> cmdNames, int index)
+        {
+            CmdWindow cmdWindow = new CmdWindow(cmdCmds, cmdNames, index);
+            cmdWindow.Top = Top + 20;
+            cmdWindow.Left = Left + 20;
+            cmdWindow.isSaveCmd += LoadCmd;
+            cmdWindow.ShowDialog();
+        }
     }
 }

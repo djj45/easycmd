@@ -47,7 +47,7 @@
                 <CommandBinding Command="Delete" CanExecute="DeleteCmd_CanExecute"/>
             </Button.CommandBindings>
         </Button>
-        <Button x:Name="EditCmdButton" Grid.Row="3" Grid.Column="6" Content="编辑" FontSize="15" Command="Replace">
+        <Button x:Name="EditCmdButton" Grid.Row="3" Grid.Column="6" Content="编辑" FontSize="15" Command="Replace" Click="EditCmdButton_Click">
             <Button.CommandBindings>
                 <CommandBinding Command="Replace" CanExecute="DeleteCmd_CanExecute"/>
             </Button.CommandBindings>

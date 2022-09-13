@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,14 +21,26 @@ namespace easycmd
     /// </summary>
     public partial class CmdWindow : Window
     {
-        List<string> cmdNames = new List<string>();
-        List<string> cmdCommands = new List<string>();
+        ObservableCollection<string> CmdNames { get; set; }
+        ObservableCollection<string> CmdCmds { get; set; }
         public delegate void IsSaveCmd();
         public IsSaveCmd isSaveCmd;
+        public int Index { get; set; }
+
+        public CmdWindow(ObservableCollection<string> cmdCmds, ObservableCollection<string> cmdNames, int index)
+        {
+            InitializeComponent();
+            CmdCmds = cmdCmds;
+            CmdNames = cmdNames;
+            Index = index;
+            CmdTextBox.Text = cmdCmds[Index];
+            NameTextBox.Text = cmdNames[Index];
+        }
 
         public CmdWindow()
         {
             InitializeComponent();
+            Index = -1;
         }
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -44,50 +57,34 @@ namespace easycmd
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            LoadCmd();
-            string command = CmdTextBox.Text;
+            string cmd = CmdTextBox.Text;
             string name = NameTextBox.Text;
-            bool canSave = true;
 
-            foreach (string s in cmdCommands)
-            {
-                if (s == command)
-                {
-                    MessageBox.Show("命令重复");
-                    canSave = false;
-                }
-            }
-            foreach (string s in cmdNames)
-            {
-                if (s == name)
-                {
-                    MessageBox.Show("名称重复");
-                    canSave = false;
-                }
-            }
-
-            if (canSave)
+            if (Index == -1)
             {
                 using (StreamWriter sw = new StreamWriter("1.txt", true))
                 {
-                    sw.WriteLine(name + '<' + command);
+                    sw.WriteLine(name + '<' + cmd);
                     MessageBox.Show("保存成功");
                 }
                 isSaveCmd();
             }
-        }
-
-        private void LoadCmd()
-        {
-            using (StreamReader sr = new StreamReader("1.txt"))
+            else
             {
-                string cmdLine;
-                while ((cmdLine = sr.ReadLine()) != null)
+                CmdNames.RemoveAt(Index);
+                CmdCmds.RemoveAt(Index);
+                CmdNames.Insert(Index, name);
+                CmdCmds.Insert(Index, cmd);
+
+                using (StreamWriter sw = new StreamWriter("1.txt"))
                 {
-                    Cmd cmd = new Cmd(cmdLine.Split('<')[0], cmdLine.Split('<')[1]);
-                    cmdNames.Add(cmd.Name);
-                    cmdCommands.Add(cmd.Command);
+                    for (int i = 0; i < CmdNames.Count; i++)
+                    {
+                        sw.WriteLine(CmdNames[i] + "<" + CmdCmds[i]);
+                    }
                 }
+                MessageBox.Show("保存成功");
+                isSaveCmd();
             }
         }
     }
