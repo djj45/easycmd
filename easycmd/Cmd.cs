@@ -178,25 +178,39 @@ namespace easycmd
             string realCmd = "";
             int end = 0, start;
 
-            start = cmd.IndexOf("[", end);
-            realCmd += cmd.Substring(end, start);
-            realCmd += '"' + fileNameList[indexList[count]] + '"';
-            end = cmd.IndexOf("]", start);
-
-            while ((start = cmd.IndexOf("[", end)) != -1)
+            if (cmdInputList.Count == 0 && cmdOutput == "")
             {
-                count++;
-                realCmd += cmd.Substring(end + 1, start - end - 1);
+                return cmd;
+            }
+            else if (cmdInputList.Count == 0)
+            {
+                realCmd = cmd.Split('<')[0] + '"' + fileNameList[0].Split('.')[0] + '-' + dateTime + "." + fileNameList[0].Split('.')[1] + '"';
+            }
+            else
+            {
+                start = cmd.IndexOf("[", end);
+                realCmd += cmd.Substring(end, start);
                 realCmd += '"' + fileNameList[indexList[count]] + '"';
                 end = cmd.IndexOf("]", start);
-            }
 
-            start = cmd.IndexOf("<", end);
-            realCmd += cmd.Substring(end + 1, start - end - 1);
+                while ((start = cmd.IndexOf("[", end)) != -1)
+                {
+                    count++;
+                    realCmd += cmd.Substring(end + 1, start - end - 1);
+                    realCmd += '"' + fileNameList[indexList[count]] + '"';
+                    end = cmd.IndexOf("]", start);
+                }
 
-            if (cmdOutput != "")
-            {
-                realCmd += '"' + fileNameList[indexList[0]] + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
+                if (cmdOutput != "")
+                {
+                    start = cmd.IndexOf("<", end);
+                    realCmd += cmd.Substring(end + 1, start - end - 1);
+                    realCmd += '"' + fileNameList[indexList[0]].Split('.')[0] + '-' + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
+                }
+                else
+                {
+                    realCmd += cmd.Substring(end + 1);
+                }
             }
 
             return realCmd;
@@ -210,18 +224,11 @@ namespace easycmd
             formatList = InitFormats();
             fileExtensionList = GetFileExtension(fileNameList);
             cmdInputList = GetCmdInputList();
-            if (cmdInputList.Count == fileExtensionList.Count)
-            {
-                cmdOutput = GetCmdOutput();
-                fileFormatList = GetFileFormatList();
-                HandleFFmpegSub();
-                GetIndexList();
-                return GetRealCmd();
-            }
-            else
-            {
-                return cmd;
-            }
+            cmdOutput = GetCmdOutput();
+            fileFormatList = GetFileFormatList();
+            HandleFFmpegSub();
+            GetIndexList();
+            return GetRealCmd();
         }
     }
 
@@ -229,11 +236,15 @@ namespace easycmd
     {
         public static string Get(string cmd, List<string> list)
         {
-            string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
-            string realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[0].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
-            for (int i = 1; i < list.Count; i++)
+            string realCmd = "";
+            if (cmd.Contains('<') && cmd.Contains('>') && cmd.Contains('<') && cmd.Contains('>'))
             {
-                realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[i].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
+                realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[0].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                for (int i = 1; i < list.Count; i++)
+                {
+                    realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[i].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                }
             }
 
             return realCmd;
