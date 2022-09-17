@@ -196,7 +196,7 @@ namespace easycmd
 
             if (cmdOutput != "")
             {
-                realCmd += '"' + dateTime + '.' + cmdOutput + '"';
+                realCmd += '"' + fileNameList[indexList[0]] + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
             }
 
             return realCmd;
@@ -210,11 +210,33 @@ namespace easycmd
             formatList = InitFormats();
             fileExtensionList = GetFileExtension(fileNameList);
             cmdInputList = GetCmdInputList();
-            cmdOutput = GetCmdOutput();
-            fileFormatList = GetFileFormatList();
-            HandleFFmpegSub();
-            GetIndexList();
-            return GetRealCmd();
+            if (cmdInputList.Count == fileExtensionList.Count)
+            {
+                cmdOutput = GetCmdOutput();
+                fileFormatList = GetFileFormatList();
+                HandleFFmpegSub();
+                GetIndexList();
+                return GetRealCmd();
+            }
+            else
+            {
+                return cmd;
+            }
+        }
+    }
+
+    internal class BulkCmd
+    {
+        public static string Get(string cmd, List<string> list)
+        {
+            string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
+            string realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[0].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+            for (int i = 1; i < list.Count; i++)
+            {
+                realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[i].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+            }
+
+            return realCmd;
         }
     }
 }
