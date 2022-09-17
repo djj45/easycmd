@@ -124,7 +124,7 @@ namespace easycmd
                 string cmdLine;
                 while ((cmdLine = sr.ReadLine()) != null)
                 {
-                    Cmd cmd = new Cmd(cmdLine.Split('<')[0], cmdLine.Split('<')[1]);
+                    ListBoxCmd cmd = new ListBoxCmd(cmdLine.Split('<')[0], cmdLine.Split('<')[1]);
                     cmdNames.Add(cmd.Name);
                     cmdCmds.Add(cmd.Command);
                 }
