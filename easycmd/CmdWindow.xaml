@@ -20,15 +20,24 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="165"/>
+            <ColumnDefinition Width="100"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="60"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="命令" FontSize="15"/>
-        <TextBox x:Name="CmdTextBox" Grid.Row="2" Grid.ColumnSpan="2" TextWrapping="Wrap" FontSize="15"/>
+        <TextBox x:Name="CmdTextBox" Grid.Row="2" Grid.ColumnSpan="6" TextWrapping="Wrap" FontSize="15"/>
         <TextBlock Text="名称" FontSize="15" Grid.Row="4"/>
-        <TextBox x:Name="NameTextBox" Grid.Row="6" Grid.ColumnSpan="2" FontSize="15"/>
-        <Button Grid.Row="8" Grid.Column="2" Content="保存" FontSize="15" Command="Save" Click="SaveButton_Click">
+        <TextBox x:Name="NameTextBox" Grid.Row="6" Grid.ColumnSpan="6" FontSize="15"/>
+        <TextBlock Text="启动窗口" Grid.Row="8" FontSize="13" Margin="3"/>
+        <ComboBox x:Name="comboBox1" Grid.Row="8" Grid.Column="1" SelectedValue="cmd"/>
+        <TextBlock Text="执行完后是否关闭启动窗口" Grid.Row="8" Grid.Column="2" FontSize="13" Margin="3"/>
+        <ComboBox x:Name="comboBox2" Grid.Row="8" Grid.Column="3" SelectedValue="不关闭"/>
+        <TextBlock x:Name="SavedTextBlock" Text="保存成功" Grid.Row="8" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Green" Visibility="Hidden"/>
+        <Button Grid.Row="8" Grid.Column="5" Content="保存" FontSize="15" Command="Save" Click="SaveButton_Click">
             <Button.CommandBindings>
                 <CommandBinding Command="Save" CanExecute="Save_CanExecute"/>
             </Button.CommandBindings>

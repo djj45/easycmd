@@ -9,6 +9,9 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="10"/>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="40"/>
@@ -30,31 +33,34 @@
 
         <TextBlock Grid.ColumnSpan="3" Text="文件列表" TextAlignment="Center" FontSize="15"/>
         <TextBlock Grid.Column="4" Grid.ColumnSpan="5" Text="命令" TextAlignment="Center" FontSize="15"/>
-        <ListBox x:Name="FileListBox" Grid.Row="1" Grid.ColumnSpan="3" AllowDrop="True" Drop="FileListBox_Drop"/>
-        <ListBox x:Name="CmdListBox" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="5"/>
-        <Button x:Name="DeleteFileButton" Grid.Row="3" Content="删除" FontSize="15" Click="DeleteFileButton_Click" Command="Delete">
+        <Button x:Name="NewGroupButton" Grid.Row="2" Grid.Column="4" Content="新建分组" FontSize="15" Click="NewGroupButton_Click"/>
+        <Button x:Name="SetPathButton" Grid.Row="2" Grid.Column="6" Content="输出位置" FontSize="15"/>
+        <ComboBox x:Name="GroupComboBox" Grid.Row="2" Grid.Column="8" FontSize="15" VerticalContentAlignment="Center" SelectionChanged="GroupComboBox_SelectionChanged"/>
+        <ListBox x:Name="FileListBox" Grid.Row="2" Grid.RowSpan="3" Grid.ColumnSpan="3" AllowDrop="True" Drop="FileListBox_Drop"/>
+        <ListBox x:Name="CmdListBox" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="5"/>
+        <Button x:Name="DeleteFileButton" Grid.Row="6" Content="删除" FontSize="15" Click="DeleteFileButton_Click" Command="Delete">
             <Button.CommandBindings>
                 <CommandBinding Command="Delete" CanExecute="DeleteFile_CanExecute"/>
             </Button.CommandBindings>
         </Button>
-        <Button x:Name="ClearFileButton" Grid.Row="3" Grid.Column="2" Content="清空" FontSize="15" Click="ClearFileButton_Click" Command="Close">
+        <Button x:Name="ClearFileButton" Grid.Row="6" Grid.Column="2" Content="清空" FontSize="15" Click="ClearFileButton_Click" Command="Close">
             <Button.CommandBindings>
                 <CommandBinding Command="Close" CanExecute="ClearFile_CanExecute"/>
             </Button.CommandBindings>
         </Button>
-        <Button x:Name="DeleteCmdButton" Grid.Row="3" Grid.Column="4" Content="删除" FontSize="15" Click="DeleteCmdButton_Click" Command="Delete">
+        <Button x:Name="DeleteCmdButton" Grid.Row="6" Grid.Column="4" Content="删除命令" FontSize="15" Click="DeleteCmdButton_Click" Command="Delete">
             <Button.CommandBindings>
                 <CommandBinding Command="Delete" CanExecute="DeleteCmd_CanExecute"/>
             </Button.CommandBindings>
         </Button>
-        <Button x:Name="EditCmdButton" Grid.Row="3" Grid.Column="6" Content="编辑" FontSize="15" Command="Replace" Click="EditCmdButton_Click">
+        <Button x:Name="EditCmdButton" Grid.Row="6" Grid.Column="6" Content="编辑命令" FontSize="15" Command="Replace" Click="EditCmdButton_Click">
             <Button.CommandBindings>
                 <CommandBinding Command="Replace" CanExecute="DeleteCmd_CanExecute"/>
             </Button.CommandBindings>
         </Button>
-        <Button x:Name="NewCmdButton" Grid.Row="3" Grid.Column="8" Content="新建" FontSize="15" Click="NewCmdButton_Click"/>
-        <TextBox x:Name="CmdTextBox" Grid.Row="5" Grid.ColumnSpan="7" IsReadOnly="True" TextWrapping="Wrap" FontSize="15"/>
-        <Button x:Name="StartButton" Grid.Row="7" Grid.Column="8" Content="开始" FontSize="15"/>
+        <Button x:Name="NewCmdButton" Grid.Row="6" Grid.Column="8" Content="新建命令" FontSize="15" Click="NewCmdButton_Click"/>
+        <TextBox x:Name="CmdTextBox" Grid.Row="8" Grid.ColumnSpan="7" IsReadOnly="True" TextWrapping="Wrap" FontSize="15"/>
+        <Button x:Name="StartButton" Grid.Row="8" Grid.Column="8" Content="开始" FontSize="15"/>
     </Grid>
 
     

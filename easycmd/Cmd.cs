@@ -12,11 +12,15 @@ namespace easycmd
     {
         public string Command { get; set; }
         public string Name { get; set; }
+        public string RunWindow { get; set; }
+        public string Exit { get; set; }
 
-        public ListBoxCmd(string name, string command)
+        public ListBoxCmd(string name, string command, string runWindow, string exit)
         {
             Name = name;
             Command = command;
+            RunWindow = runWindow;
+            Exit = exit;
         }
     }
 
@@ -178,11 +182,11 @@ namespace easycmd
             string realCmd = "";
             int end = 0, start;
 
-            if (cmdInputList.Count == 0 && cmdOutput == "")
+            if (cmdInputList.Count == 0 && cmdOutput == "")//无输入无输出
             {
                 return cmd;
             }
-            else if (cmdInputList.Count == 0)
+            else if (cmdInputList.Count == 0)//无输入一输出
             {
                 realCmd = cmd.Split('<')[0] + '"' + fileNameList[0].Split('.')[0] + '-' + dateTime + "." + fileNameList[0].Split('.')[1] + '"';
             }
@@ -201,13 +205,13 @@ namespace easycmd
                     end = cmd.IndexOf("]", start);
                 }
 
-                if (cmdOutput != "")
+                if (cmdOutput != "")//多输入一输出
                 {
                     start = cmd.IndexOf("<", end);
                     realCmd += cmd.Substring(end + 1, start - end - 1);
                     realCmd += '"' + fileNameList[indexList[0]].Split('.')[0] + '-' + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
                 }
-                else
+                else//多输入无输出
                 {
                     realCmd += cmd.Substring(end + 1);
                 }
@@ -234,7 +238,7 @@ namespace easycmd
 
     internal class BulkCmd
     {
-        public static string Get(string cmd, List<string> list)
+        public static string Get(string cmd, List<string> list)//批量，一输入一输出
         {
             string realCmd = "";
             if (cmd.Contains('<') && cmd.Contains('>') && cmd.Contains('<') && cmd.Contains('>'))

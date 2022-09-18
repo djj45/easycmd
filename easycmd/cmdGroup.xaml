@@ -1,0 +1,34 @@
+﻿<Window x:Class="easycmd.CmdGroupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:easycmd"
+        mc:Ignorable="d"
+        Title="cmdGroup" Height="180" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="5"/>
+            <RowDefinition/>
+            <RowDefinition Height="5"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="名称" FontSize="15"/>
+        <TextBox x:Name="NameTextBox" Grid.Row="2" Grid.ColumnSpan="4"/>
+        <TextBlock x:Name="SavedTextBlock" Text="保存成功" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="Green" Visibility="Hidden"/>
+        <Button x:Name="SaveButton" Content="保存" Grid.Row="4" Grid.Column="3" Click="SaveButton_Click" FontSize="15" Command="Save">
+            <Button.CommandBindings>
+                <CommandBinding Command="Save" CanExecute="SaveCmdGroup_CanExecute"/>
+            </Button.CommandBindings>
+        </Button>
+    </Grid>
+</Window>

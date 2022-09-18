@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace easycmd
 {
@@ -26,14 +14,20 @@ namespace easycmd
         ObservableCollection<string> files = new ObservableCollection<string>();
         ObservableCollection<string> cmdNames = new ObservableCollection<string>();
         ObservableCollection<string> cmdCmds = new ObservableCollection<string>();
+        ObservableCollection<string> cmdRunWindows = new ObservableCollection<string>();
+        ObservableCollection<string> cmdExits = new ObservableCollection<string>();
+        ObservableCollection<string> cmdGroup = new ObservableCollection<string>();
+        string cmdGroupPath;
+        string defaultPath = @"output\";
 
         public MainWindow()
         {
             InitializeComponent();
-            LoadCmd();
+            LoadGroup();
 
             FileListBox.ItemsSource = files;
             CmdListBox.ItemsSource = cmdNames;
+            GroupComboBox.ItemsSource = cmdGroup;
         }
 
         private void FileListBox_Drop(object sender, DragEventArgs e)
@@ -79,13 +73,17 @@ namespace easycmd
 
         private void DeleteCmdButton_Click(object sender, RoutedEventArgs e)
         {
-            cmdNames.RemoveAt(CmdListBox.SelectedIndex);
+            int index = CmdListBox.SelectedIndex;
+            cmdNames.RemoveAt(index);
+            cmdCmds.RemoveAt(index);
+            cmdRunWindows.RemoveAt(index);
+            cmdExits.RemoveAt(index);
 
-            using (StreamWriter sw = new StreamWriter("1.txt"))
+            using (StreamWriter sw = new StreamWriter(cmdGroupPath))
             {
                 for (int i = 0; i < cmdNames.Count; i++)
                 {
-                    sw.WriteLine(cmdNames[i] + "<" + cmdCmds[i]);
+                    sw.WriteLine(cmdNames[i] + "|" + cmdCmds[i] + "|" + cmdRunWindows[i] + "|" + cmdExits[i]);
                 }
             }
         }
@@ -114,44 +112,78 @@ namespace easycmd
             }
         }
 
-        public void LoadCmd()
+        public void LoadCmd(string path)
         {
             cmdNames.Clear();
             cmdCmds.Clear();
+            cmdRunWindows.Clear();
+            cmdExits.Clear();
 
-            using (StreamReader sr = new StreamReader("1.txt"))
+            using (StreamReader sr = new StreamReader(path))
             {
                 string cmdLine;
                 while ((cmdLine = sr.ReadLine()) != null)
                 {
-                    ListBoxCmd cmd = new ListBoxCmd(cmdLine.Split('<')[0], cmdLine.Split('<')[1]);
+                    ListBoxCmd cmd = new ListBoxCmd(cmdLine.Split('|')[0], cmdLine.Split('|')[1], cmdLine.Split('|')[2], cmdLine.Split('|')[3]);
                     cmdNames.Add(cmd.Name);
                     cmdCmds.Add(cmd.Command);
+                    cmdRunWindows.Add(cmd.RunWindow);
+                    cmdExits.Add(cmd.Exit);
                 }
             }
         }
 
         private void EditCmdButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenNewWindow(cmdCmds, cmdNames, CmdListBox.SelectedIndex);
+            OpenEditWindow();
         }
 
         private void OpenNewWindow()
         {
-            CmdWindow cmdWindow = new CmdWindow();
+            CmdWindow cmdWindow = new CmdWindow(cmdGroupPath);
             cmdWindow.Top = Top + 20;
             cmdWindow.Left = Left + 20;
             cmdWindow.isSaveCmd += LoadCmd;
             cmdWindow.ShowDialog();
         }
 
-        private void OpenNewWindow(ObservableCollection<string> cmdCmds, ObservableCollection<string> cmdNames, int index)
+        private void OpenEditWindow()
         {
-            CmdWindow cmdWindow = new CmdWindow(cmdCmds, cmdNames, index);
+            CmdWindow cmdWindow = new CmdWindow(cmdCmds, cmdNames, cmdRunWindows, cmdExits, CmdListBox.SelectedIndex, cmdGroupPath);
             cmdWindow.Top = Top + 20;
             cmdWindow.Left = Left + 20;
             cmdWindow.isSaveCmd += LoadCmd;
             cmdWindow.ShowDialog();
+        }
+
+        private void LoadGroup()
+        {
+            cmdGroup.Clear();
+            string[] files = Directory.GetFiles(@"config\group");
+            foreach (var file in files)
+            {
+                cmdGroup.Add(Path.GetFileName(file).Split('.')[0]);
+            }
+
+            GroupComboBox.SelectedValue = "常用";
+        }
+
+        private void GroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (GroupComboBox.SelectedValue != null)
+            {
+                cmdGroupPath = @"config\group\" + GroupComboBox.SelectedValue.ToString() + ".txt";
+                LoadCmd(cmdGroupPath);
+            }
+        }
+
+        private void NewGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            CmdGroupWindow cmdGroupWindow = new CmdGroupWindow(cmdGroup);
+            cmdGroupWindow.Top = Top + 20;
+            cmdGroupWindow.Left = Left + 20;
+            cmdGroupWindow.isSaveGroup += LoadGroup;
+            cmdGroupWindow.ShowDialog();
         }
     }
 }
