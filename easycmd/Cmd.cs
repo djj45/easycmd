@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace easycmd
     internal class GetCmd
     {
         static string cmd;
-        static List<string> fileNameList = new List<string>();
+        static ObservableCollection<string> fileNameList = new ObservableCollection<string>();
         static List<Formats> formatList = new List<Formats>();
         static List<string> fileExtensionList = new List<string>();
         static List<string> cmdInputList = new List<string>();
@@ -52,7 +53,7 @@ namespace easycmd
         {
             List<Formats> formats = new List<Formats>();
             //外部自定义格式优先
-            using (StreamReader sr = new StreamReader("1.txt"))
+            using (StreamReader sr = new StreamReader(@"1.txt"))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
@@ -70,7 +71,7 @@ namespace easycmd
             return formats;
         }
 
-        static List<string> GetFileExtension(List<string> fileNameList)
+        static List<string> GetFileExtension(ObservableCollection<string> fileNameList)
         {
             List<string> list = new List<string>();
             foreach (var file in fileNameList)
@@ -188,39 +189,53 @@ namespace easycmd
             }
             else if (cmdInputList.Count == 0)//无输入一输出
             {
-                realCmd = cmd.Split('<')[0] + '"' + fileNameList[0].Split('.')[0] + '-' + dateTime + "." + fileNameList[0].Split('.')[1] + '"';
+                if (fileNameList.Count == 1)
+                {
+                    realCmd = cmd.Split('<')[0] + '"' + fileNameList[0].Split('.')[0] + '-' + dateTime + "." + fileNameList[0].Split('.')[1] + '"';
+                }
+                else
+                {
+                    return cmd;
+                }
             }
             else
             {
-                start = cmd.IndexOf("[", end);
-                realCmd += cmd.Substring(end, start);
-                realCmd += '"' + fileNameList[indexList[count]] + '"';
-                end = cmd.IndexOf("]", start);
-
-                while ((start = cmd.IndexOf("[", end)) != -1)
+                if (fileNameList.Count != 0)
                 {
-                    count++;
-                    realCmd += cmd.Substring(end + 1, start - end - 1);
+                    start = cmd.IndexOf("[", end);
+                    realCmd += cmd.Substring(end, start);
                     realCmd += '"' + fileNameList[indexList[count]] + '"';
                     end = cmd.IndexOf("]", start);
-                }
 
-                if (cmdOutput != "")//多输入一输出
-                {
-                    start = cmd.IndexOf("<", end);
-                    realCmd += cmd.Substring(end + 1, start - end - 1);
-                    realCmd += '"' + fileNameList[indexList[0]].Split('.')[0] + '-' + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
+                    while ((start = cmd.IndexOf("[", end)) != -1)
+                    {
+                        count++;
+                        realCmd += cmd.Substring(end + 1, start - end - 1);
+                        realCmd += '"' + fileNameList[indexList[count]] + '"';
+                        end = cmd.IndexOf("]", start);
+                    }
+
+                    if (cmdOutput != "")//多输入一输出
+                    {
+                        start = cmd.IndexOf("<", end);
+                        realCmd += cmd.Substring(end + 1, start - end - 1);
+                        realCmd += '"' + fileNameList[indexList[0]].Split('.')[0] + '-' + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
+                    }
+                    else//多输入无输出
+                    {
+                        realCmd += cmd.Substring(end + 1);
+                    }
                 }
-                else//多输入无输出
+                else
                 {
-                    realCmd += cmd.Substring(end + 1);
+                    return cmd;
                 }
             }
 
             return realCmd;
         }
 
-        public static string Get(string _cmd, List<string> _fileNameList)
+        public static string Get(string _cmd, ObservableCollection<string> _fileNameList)
         {
             cmd = _cmd;
             fileNameList = _fileNameList;
@@ -238,20 +253,59 @@ namespace easycmd
 
     internal class BulkCmd
     {
-        public static string Get(string cmd, List<string> list)//批量，一输入一输出
+        public static string Get(string cmd, ObservableCollection<string> list)//批量，一输入一输出
         {
             string realCmd = "";
-            if (cmd.Contains('<') && cmd.Contains('>') && cmd.Contains('<') && cmd.Contains('>'))
+            if (list.Count != 0)
             {
-                string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
-                realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[0].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
-                for (int i = 1; i < list.Count; i++)
+                if (cmd.Contains('<') && cmd.Contains('>') && cmd.Contains('<') && cmd.Contains('>'))
                 {
-                    realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[i].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                    string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
+                    realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[0].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                    for (int i = 1; i < list.Count; i++)
+                    {
+                        realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + list[i].Split('.')[0] + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                    }
                 }
+            }
+            else
+            {
+                realCmd = cmd;
             }
 
             return realCmd;
+        }
+    }
+
+    internal class ExitCmd
+    {
+        public static string Get(string runWindow, string exit)
+        {
+            string exitSetting;
+            if (runWindow == "cmd")
+            {
+                if (exit == "不关闭")
+                {
+                    exitSetting = "/k ";
+                }
+                else
+                {
+                    exitSetting = "/c ";
+                }
+            }
+            else
+            {
+                if (exit == "不关闭")
+                {
+                    exitSetting = "-noexit ";
+                }
+                else
+                {
+                    exitSetting = "";
+                }
+            }
+
+            return exitSetting;
         }
     }
 }

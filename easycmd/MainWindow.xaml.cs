@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,13 +18,17 @@ namespace easycmd
         ObservableCollection<string> cmdRunWindows = new ObservableCollection<string>();
         ObservableCollection<string> cmdExits = new ObservableCollection<string>();
         ObservableCollection<string> cmdGroup = new ObservableCollection<string>();
-        string cmdGroupPath;
-        string defaultPath = @"output\";
+        string CmdGroupPath { get; set; }
+        string OutputPath { get; set; }
+        string RealCmd { get; set; }
+        string ExitSetting { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
+            CheckConfig();
             LoadGroup();
+            LoadPath();
 
             FileListBox.ItemsSource = files;
             CmdListBox.ItemsSource = cmdNames;
@@ -41,17 +46,20 @@ namespace easycmd
                     files.Add(path);
                 }
                 CmdListBox.Focus();
+                CreateCmd(GroupComboBox.SelectedValue.ToString());//@@if null?
             }
         }
 
         private void DeleteFileButton_Click(object sender, RoutedEventArgs e)
         {
             files.RemoveAt(FileListBox.SelectedIndex);
+            CreateCmd(GroupComboBox.SelectedValue.ToString());
         }
 
         private void ClearFileButton_Click(object sender, RoutedEventArgs e)
         {
             files.Clear();
+            CreateCmd(GroupComboBox.SelectedValue.ToString());
         }
 
         private void NewCmdButton_Click(object sender, RoutedEventArgs e)
@@ -79,7 +87,7 @@ namespace easycmd
             cmdRunWindows.RemoveAt(index);
             cmdExits.RemoveAt(index);
 
-            using (StreamWriter sw = new StreamWriter(cmdGroupPath))
+            using (StreamWriter sw = new StreamWriter(CmdGroupPath))
             {
                 for (int i = 0; i < cmdNames.Count; i++)
                 {
@@ -140,7 +148,7 @@ namespace easycmd
 
         private void OpenNewWindow()
         {
-            CmdWindow cmdWindow = new CmdWindow(cmdGroupPath);
+            CmdWindow cmdWindow = new CmdWindow(CmdGroupPath);
             cmdWindow.Top = Top + 20;
             cmdWindow.Left = Left + 20;
             cmdWindow.isSaveCmd += LoadCmd;
@@ -149,7 +157,7 @@ namespace easycmd
 
         private void OpenEditWindow()
         {
-            CmdWindow cmdWindow = new CmdWindow(cmdCmds, cmdNames, cmdRunWindows, cmdExits, CmdListBox.SelectedIndex, cmdGroupPath);
+            CmdWindow cmdWindow = new CmdWindow(cmdCmds, cmdNames, cmdRunWindows, cmdExits, CmdListBox.SelectedIndex, CmdGroupPath);
             cmdWindow.Top = Top + 20;
             cmdWindow.Left = Left + 20;
             cmdWindow.isSaveCmd += LoadCmd;
@@ -172,8 +180,11 @@ namespace easycmd
         {
             if (GroupComboBox.SelectedValue != null)
             {
-                cmdGroupPath = @"config\group\" + GroupComboBox.SelectedValue.ToString() + ".txt";
-                LoadCmd(cmdGroupPath);
+                CmdTextBox.Text = "";
+                CmdListBox.SelectedIndex = 0;
+                CmdGroupPath = @"config\group\" + GroupComboBox.SelectedValue.ToString() + ".txt";
+                LoadCmd(CmdGroupPath);
+                CreateCmd(GroupComboBox.SelectedValue.ToString());
             }
         }
 
@@ -184,6 +195,68 @@ namespace easycmd
             cmdGroupWindow.Left = Left + 20;
             cmdGroupWindow.isSaveGroup += LoadGroup;
             cmdGroupWindow.ShowDialog();
+        }
+
+        private void SetPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            CmdPath cmdPath = new CmdPath(OutputPath);
+            cmdPath.Top = Top + 20;
+            cmdPath.Left = Left + 20;
+            cmdPath.isSavePath += LoadPath;
+            cmdPath.ShowDialog();
+        }
+
+        private void LoadPath()
+        {
+            using (StreamReader sr = new StreamReader(@"config\path\path.txt"))
+            {
+                OutputPath = sr.ReadLine();
+            }
+        }
+
+        private void CheckConfig()
+        {
+            if (!(Directory.Exists(Directory.GetCurrentDirectory() + @"\config\group")))
+            {
+                Directory.CreateDirectory(@"config\group");
+                using (File.Create(@"config\group\常用.txt")) { }
+                using (File.Create(@"config\group\批量.txt")) { }
+
+            }
+            if (!(Directory.Exists(Directory.GetCurrentDirectory() + @"\config\path")))
+            {
+                Directory.CreateDirectory(@"config\path");
+                using (StreamWriter sw = new StreamWriter(@"config\path\path.txt"))
+                {
+                    sw.WriteLine(@"output\");
+                }
+            }
+            if (!(Directory.Exists(Directory.GetCurrentDirectory() + @"\output")))
+            {
+                Directory.CreateDirectory("output");
+            }
+        }
+
+        private void CreateCmd(string group)
+        {
+            if (cmdCmds.Count != 0 && CmdListBox.SelectedIndex != -1)
+            {
+                if (group == "批量")
+                {
+                    RealCmd = BulkCmd.Get(cmdCmds[CmdListBox.SelectedIndex], files);
+                }
+                else
+                {
+                    RealCmd = GetCmd.Get(cmdCmds[CmdListBox.SelectedIndex], files);
+                }
+                ExitSetting = ExitCmd.Get(cmdRunWindows[CmdListBox.SelectedIndex], cmdExits[CmdListBox.SelectedIndex]);
+                CmdTextBox.Text = RealCmd;
+            }
+        }
+
+        private void CmdListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CreateCmd(GroupComboBox.SelectedValue.ToString());
         }
     }
 }

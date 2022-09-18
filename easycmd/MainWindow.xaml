@@ -34,10 +34,10 @@
         <TextBlock Grid.ColumnSpan="3" Text="文件列表" TextAlignment="Center" FontSize="15"/>
         <TextBlock Grid.Column="4" Grid.ColumnSpan="5" Text="命令" TextAlignment="Center" FontSize="15"/>
         <Button x:Name="NewGroupButton" Grid.Row="2" Grid.Column="4" Content="新建分组" FontSize="15" Click="NewGroupButton_Click"/>
-        <Button x:Name="SetPathButton" Grid.Row="2" Grid.Column="6" Content="输出位置" FontSize="15"/>
+        <Button x:Name="SetPathButton" Grid.Row="2" Grid.Column="6" Content="输出位置" FontSize="15" Click="SetPathButton_Click"/>
         <ComboBox x:Name="GroupComboBox" Grid.Row="2" Grid.Column="8" FontSize="15" VerticalContentAlignment="Center" SelectionChanged="GroupComboBox_SelectionChanged"/>
         <ListBox x:Name="FileListBox" Grid.Row="2" Grid.RowSpan="3" Grid.ColumnSpan="3" AllowDrop="True" Drop="FileListBox_Drop"/>
-        <ListBox x:Name="CmdListBox" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="5"/>
+        <ListBox x:Name="CmdListBox" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="5" SelectionChanged="CmdListBox_SelectionChanged"/>
         <Button x:Name="DeleteFileButton" Grid.Row="6" Content="删除" FontSize="15" Click="DeleteFileButton_Click" Command="Delete">
             <Button.CommandBindings>
                 <CommandBinding Command="Delete" CanExecute="DeleteFile_CanExecute"/>

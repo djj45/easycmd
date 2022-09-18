@@ -55,7 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="cmdGroup.xaml">
+    <Page Include="CmdGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CmdPath.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -72,8 +76,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Cmd.cs" />
-    <Compile Include="cmdGroup.xaml.cs">
-      <DependentUpon>cmdGroup.xaml</DependentUpon>
+    <Compile Include="CmdGroup.xaml.cs">
+      <DependentUpon>CmdGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CmdPath.xaml.cs">
+      <DependentUpon>CmdPath.xaml</DependentUpon>
     </Compile>
     <Compile Include="CmdWindow.xaml.cs">
       <DependentUpon>CmdWindow.xaml</DependentUpon>
