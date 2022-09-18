@@ -76,7 +76,7 @@ namespace easycmd
             List<string> list = new List<string>();
             foreach (var file in fileNameList)
             {
-                list.Add(file.Split('.')[1]);
+                list.Add(Path.GetExtension(file).TrimStart('.'));
             }
 
             return list;
@@ -85,6 +85,7 @@ namespace easycmd
         static List<string> GetCmdInputList()
         {
             int end = 0, start;
+            cmdInputList.Clear();
             if (cmd.Contains("[") && cmd.Contains("]"))
             {
                 while ((start = cmd.IndexOf("[", end)) != -1)

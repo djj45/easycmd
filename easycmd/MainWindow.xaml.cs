@@ -18,6 +18,7 @@ namespace easycmd
         ObservableCollection<string> cmdRunWindows = new ObservableCollection<string>();
         ObservableCollection<string> cmdExits = new ObservableCollection<string>();
         ObservableCollection<string> cmdGroup = new ObservableCollection<string>();
+        int cmdListBoxSeletedIndex = 0;
         string CmdGroupPath { get; set; }
         string OutputPath { get; set; }
         string RealCmd { get; set; }
@@ -139,10 +140,13 @@ namespace easycmd
                     cmdExits.Add(cmd.Exit);
                 }
             }
+
+            CmdListBox.SelectedIndex = cmdListBoxSeletedIndex;
         }
 
         private void EditCmdButton_Click(object sender, RoutedEventArgs e)
         {
+            cmdListBoxSeletedIndex = CmdListBox.SelectedIndex;
             OpenEditWindow();
         }
 
@@ -180,10 +184,9 @@ namespace easycmd
         {
             if (GroupComboBox.SelectedValue != null)
             {
-                CmdTextBox.Text = "";
-                CmdListBox.SelectedIndex = 0;
                 CmdGroupPath = @"config\group\" + GroupComboBox.SelectedValue.ToString() + ".txt";
                 LoadCmd(CmdGroupPath);
+                CmdListBox.SelectedIndex = 0;
                 CreateCmd(GroupComboBox.SelectedValue.ToString());
             }
         }
@@ -251,6 +254,10 @@ namespace easycmd
                 }
                 ExitSetting = ExitCmd.Get(cmdRunWindows[CmdListBox.SelectedIndex], cmdExits[CmdListBox.SelectedIndex]);
                 CmdTextBox.Text = RealCmd;
+            }
+            else
+            {
+                CmdTextBox.Text = "";
             }
         }
 
