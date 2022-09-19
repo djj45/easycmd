@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -246,11 +247,11 @@ namespace easycmd
             {
                 if (group == "批量")
                 {
-                    RealCmd = BulkCmd.Get(cmdCmds[CmdListBox.SelectedIndex], files);
+                    RealCmd = BulkCmd.Get(cmdCmds[CmdListBox.SelectedIndex], files, OutputPath);
                 }
                 else
                 {
-                    RealCmd = GetCmd.Get(cmdCmds[CmdListBox.SelectedIndex], files);
+                    RealCmd = GetCmd.Get(cmdCmds[CmdListBox.SelectedIndex], files, OutputPath);
                 }
                 ExitSetting = ExitCmd.Get(cmdRunWindows[CmdListBox.SelectedIndex], cmdExits[CmdListBox.SelectedIndex]);
                 CmdTextBox.Text = RealCmd;
@@ -264,6 +265,17 @@ namespace easycmd
         private void CmdListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CreateCmd(GroupComboBox.SelectedValue.ToString());
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (Process myProcess = new Process())
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = cmdRunWindows[CmdListBox.SelectedIndex];
+                process.StartInfo.Arguments = ExitSetting + CmdTextBox.Text;
+                process.Start();
+            }
         }
     }
 }

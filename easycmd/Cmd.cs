@@ -146,7 +146,7 @@ namespace easycmd
             //https://superuser.com/questions/1247197/ffmpeg-absolute-path-error
             for (int i = 0; i < fileFormatList.Count; i++)
             {
-                if (fileFormatList[i] == "ffsub")
+                if (fileFormatList[i] == "ffsub" && !fileNameList[i].Contains(@"\\\\"))
                 {
                     string name = fileNameList[i];
                     fileNameList.RemoveAt(i);
@@ -182,7 +182,7 @@ namespace easycmd
             }
         }
 
-        static string GetRealCmd()
+        static string GetRealCmd(string outputPath)
         {
             string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
             int count = 0;
@@ -195,7 +195,7 @@ namespace easycmd
             }
             else if (cmdInputList.Count == 0)//无输入一输出
             {
-                realCmd = cmd.Split('<')[0] + '"' + dateTime + "." + cmdOutput + '"' + cmd.Split('>')[1];
+                realCmd = cmd.Split('<')[0] + '"' + outputPath + dateTime + "." + cmdOutput + '"' + cmd.Split('>')[1];
             }
             else
             {
@@ -218,7 +218,7 @@ namespace easycmd
                     {
                         start = cmd.IndexOf("<", end);
                         realCmd += cmd.Substring(end + 1, start - end - 1);
-                        realCmd += '"' + fileNameList[indexList[0]].Split('.')[0] + '-' + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
+                        realCmd += '"' + outputPath + Path.GetFileNameWithoutExtension(fileNameList[indexList[0]]) + '-' + dateTime + '.' + cmdOutput + '"' + cmd.Split('>')[1];
                     }
                     else//多输入无输出
                     {
@@ -234,7 +234,7 @@ namespace easycmd
             return realCmd;
         }
 
-        public static string Get(string _cmd, ObservableCollection<string> _fileNameList)
+        public static string Get(string _cmd, ObservableCollection<string> _fileNameList, string outputPath)
         {
             cmd = _cmd;
             fileNameList = _fileNameList;
@@ -246,13 +246,13 @@ namespace easycmd
             fileFormatList = GetFileFormatList();
             HandleFFmpegSub();
             GetIndexList();
-            return GetRealCmd();
+            return GetRealCmd(outputPath);
         }
     }
 
     internal class BulkCmd
     {
-        public static string Get(string cmd, ObservableCollection<string> list)//批量，一输入一输出
+        public static string Get(string cmd, ObservableCollection<string> list, string outputPath)//批量，一输入一输出
         {
             string realCmd = "";
             if (list.Count != 0)
@@ -260,11 +260,11 @@ namespace easycmd
                 if (cmd.Contains('<') && cmd.Contains('>') && cmd.Contains('<') && cmd.Contains('>'))
                 {
                     string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
-                    realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + Path.GetFileNameWithoutExtension(list[0]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                    realCmd = cmd.Split('[')[0] + '"' + Path.GetFileNameWithoutExtension(list[0]) + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + outputPath + Path.GetFileNameWithoutExtension(list[0]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
                     for (int i = 1; i < list.Count; i++)
                     {
                         dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
-                        realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + Path.GetFileNameWithoutExtension(list[i]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                        realCmd += " && " + cmd.Split('[')[0] + '"' + Path.GetFileNameWithoutExtension(list[i]) + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + outputPath + Path.GetFileNameWithoutExtension(list[i]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
                     }
                 }
             }
