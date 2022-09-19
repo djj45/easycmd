@@ -216,6 +216,7 @@ namespace easycmd
             {
                 OutputPath = sr.ReadLine();
             }
+            CreateCmd(GroupComboBox.SelectedValue.ToString());
         }
 
         private void CheckConfig()
@@ -234,6 +235,12 @@ namespace easycmd
                 {
                     sw.WriteLine(@"output\");
                 }
+            }
+            if (!(Directory.Exists(Directory.GetCurrentDirectory() + @"\config\format")))
+            {
+                Directory.CreateDirectory(@"config\format");
+                using (File.Create(@"config\format\format.txt")) { }
+
             }
             if (!(Directory.Exists(Directory.GetCurrentDirectory() + @"\output")))
             {

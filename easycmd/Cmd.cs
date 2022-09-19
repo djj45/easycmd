@@ -52,7 +52,7 @@ namespace easycmd
         {
             List<Formats> formats = new List<Formats>();
             //外部自定义格式优先
-            using (StreamReader sr = new StreamReader(@"1.txt"))
+            using (StreamReader sr = new StreamReader(@"config\format\format.txt"))
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
