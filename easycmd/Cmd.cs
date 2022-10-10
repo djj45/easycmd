@@ -260,11 +260,11 @@ namespace easycmd
                 if (cmd.Contains('<') && cmd.Contains('>') && cmd.Contains('<') && cmd.Contains('>'))
                 {
                     string dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
-                    realCmd = cmd.Split('[')[0] + '"' + Path.GetFileNameWithoutExtension(list[0]) + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + outputPath + Path.GetFileNameWithoutExtension(list[0]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                    realCmd = cmd.Split('[')[0] + '"' + list[0] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + outputPath + Path.GetFileNameWithoutExtension(list[0]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
                     for (int i = 1; i < list.Count; i++)
                     {
                         dateTime = DateTime.Now.ToString().Replace('/', '-').Replace(' ', '-').Replace(':', '-');
-                        realCmd += " && " + cmd.Split('[')[0] + '"' + Path.GetFileNameWithoutExtension(list[i]) + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + outputPath + Path.GetFileNameWithoutExtension(list[i]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
+                        realCmd += " && " + cmd.Split('[')[0] + '"' + list[i] + '"' + cmd.Split(']')[1].Split('<')[0] + '"' + outputPath + Path.GetFileNameWithoutExtension(list[i]) + '-' + dateTime + '.' + cmd.Split('<')[1].Split('>')[0] + '"' + cmd.Split('>')[1];
                     }
                 }
             }
